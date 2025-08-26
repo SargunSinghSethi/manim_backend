@@ -1,0 +1,18 @@
+Prisma schema loaded from prisma\schema.prisma
+Datasource "db": PostgreSQL database "my_manim_db", schema "public" at "ep-mute-meadow-a4mj8atg-pooler.us-east-1.aws.neon.tech"
+
+Applying migration `20250813165512_job`
+
+The following migration(s) have been created and applied from new schema changes:
+
+prisma\migrations/
+  └─ 20250813165512_job/
+    └─ migration.sql
+
+Your database is now in sync with your schema.
+
+Running generate... (Use --skip-generate to skip the generators)
+[2K[1A[2K[GRunning generate... - Prisma Client
+[2K[1A[2K[G✔ Generated Prisma Client (v6.14.0) to .\node_modules\@prisma\client in 52ms
+
+

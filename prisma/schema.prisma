@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+  // output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum JobStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model User {
+  id       Int     @id @default(autoincrement())
+  username String  @unique
+  clerkId  String  @unique // Added for Clerk integration
+  email    String  @unique
+  jobs     Job[]
+  videos   Video[]
+
+  @@map("users")
+}
+
+model Job {
+  id            Int     @id @default(autoincrement())
+  userId        Int
+  prompt        String
+  jobUuid       String  @unique
+  generatedCode String? @db.Text
+  videoId       Int? // ✅ Reference to Video table
+
+  status       JobStatus @default(PENDING)
+  errorMessage String?
+  createdAt    DateTime  @default(now())
+  completedAt  DateTime? // Add this field
+  retryLeft    Int       @default(3)
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  video Video? @relation(fields: [videoId], references: [id])
+
+  @@map("jobs")
+}
+
+model Video {
+  id             Int      @id @default(autoincrement())
+  userId         Int
+  jobId          String   @unique
+  title          String
+  associatedCode String   @db.Text
+  videoUrl       String
+  createdAt      DateTime @default(now())
+
+  user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Jobs Job[]
+
+  @@map("videos")
+}
