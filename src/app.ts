@@ -49,7 +49,19 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // Clerk middleware - Add this to ALL routes
-app.use(clerkMiddleware());
+// app.use(clerkMiddleware());
+
+app.use((req, res, next) => {
+  // Skip Clerk middleware for these public routes
+  const publicRoutes = ['/health', '/api/public'];
+  
+  if (publicRoutes.includes(req.path)) {
+    return next();
+  }
+  
+  // Apply Clerk middleware for all other routes
+  return clerkMiddleware()(req, res, next);
+});
 
 // Root health check
 app.get('/health', (req, res) => {
