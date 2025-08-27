@@ -22,13 +22,13 @@ app.use(helmet());
 
 const allowedOrigins = process.env.NODE_ENV === 'production'
   ? [
-      process.env.PYTHON_SERVICE_URL,
-      process.env.FRONTEND_URL
-    ]
+    process.env.FRONTEND_URL,
+    process.env.PYTHON_SERVICE_URL
+  ]
   : [
-      'http://localhost:3000',
-      'http://localhost:8000'
-    ];
+    'http://localhost:3000',
+    'http://localhost:8000'
+  ];
 
 app.use(cors({
   origin: (origin, callback) => {
@@ -53,8 +53,8 @@ app.use(clerkMiddleware());
 
 // Root health check
 app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'healthy', 
+  res.json({
+    status: 'healthy',
     timestamp: new Date().toISOString(),
     service: 'manim-ai-express'
   });
@@ -63,7 +63,7 @@ app.get('/health', (req, res) => {
 
 // Public route - no auth required
 app.get('/api/public', (req, res) => {
-  res.json({ 
+  res.json({
     message: 'This is a public endpoint',
     timestamp: new Date().toISOString()
   });
@@ -72,7 +72,7 @@ app.get('/api/public', (req, res) => {
 // Protected test route - MOVE THIS BEFORE /api routes
 app.get('/api/protected', requireApiAuth(), async (req, res) => {
   const { userId } = getAuth(req);
-  
+
   res.json({
     message: 'This is a protected endpoint',
     userId,
@@ -88,7 +88,7 @@ app.use('/webhooks', webhookRoutes);
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error('Error:', err);
-  
+
   res.status(err.status || 500).json({
     error: process.env.NODE_ENV === 'development' ? err.message : 'Internal Server Error',
     ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
